@@ -1,0 +1,165 @@
+import telebot
+import time
+import requests
+import json
+import datetime
+import markups as btn
+from telebot import types
+from dbase import Database
+from config import TOKEN, PUBLIC_CHANNEL_ID, PRIVATE_CHANNEL_ID,  STICKER_ID, CRYPTO_ADDRESS, MANAGER_LINK, TRANSACTION_AMOUNT, ACCESS_EXPIRY, ADMIN_ID
+
+
+bot = telebot.TeleBot(TOKEN)
+db = Database('access.db')
+
+
+def chat_member_status(chat_member):
+    if not chat_member.status == 'left':
+        return True
+    else:
+        return False
+
+
+@bot.message_handler(commands=['start'])
+def start(message: types.Message):
+    if message.from_user.id == ADMIN_ID:
+        bot.send_sticker(message.chat.id, STICKER_ID, reply_markup=btn.RestartMenu)
+        bot.send_message(message.chat.id, '👋 Welcome to Admin menu\nChoose an action below:', reply_markup=btn.AdminMenu)
+    else:
+        chat_member = bot.get_chat_member(chat_id=PUBLIC_CHANNEL_ID, user_id=message.from_user.id)
+        if chat_member_status(chat_member) == True:
+            bot.send_sticker(message.chat.id, STICKER_ID, reply_markup=btn.RestartMenu)
+            bot.send_message(message.chat.id, '👋 Welcome\nChoose an action below:', reply_markup=btn.Action)
+        else:
+            message.reply('You are not member of the channel\nYou can join it by pressing the button below', reply_markup=btn.JoinMenu)
+
+
+@bot.message_handler()
+def restart(message: types.Message):
+    if message.text == 'Check':
+        chat_member = bot.get_chat_member(chat_id=PUBLIC_CHANNEL_ID, user_id=message.from_user.id)
+        if chat_member_status(chat_member) == True:
+            start(message)
+        else:
+            message.reply('You are not member of the channel\nYou can join it by pressing the button below', reply_markup=btn.JoinMenu)
+    elif message.text == 'Restart bot':
+        restart_msg = bot.send_message(message.chat.id, 'Restarting')
+        time.sleep(1)
+        bot.edit_message_text(chat_id=message.chat.id, message_id=restart_msg.message_id, text='Restarting.')
+        time.sleep(1)
+        bot.edit_message_text(chat_id=message.chat.id, message_id=restart_msg.message_id, text='Restarting..')
+        time.sleep(1)
+        bot.edit_message_text(chat_id=message.chat.id, message_id=restart_msg.message_id, text='Restarting...')
+        time.sleep(1)
+        bot.delete_message(chat_id=message.chat.id, message_id=restart_msg.message_id)
+        start(message)
+    else:
+        bot.send_message(message.chat.id, 'Unknown command')
+
+
+@bot.callback_query_handler(func=lambda callback: callback.data == 'access')
+def access(callback):
+    address_msg = bot.send_message(callback.message.chat.id, 'Enter the address from which you are going to make transaction\n(USDT, TRC20)\nUsers who have ever bought access before receive a discount')
+    bot.register_next_step_handler(address_msg, access2)
+
+def access2(message: types.Message):
+    link = 'https://apilist.tronscan.org/api/account?address=' + message.text
+    get_link = requests.get(link).text
+    check_address = json.loads(get_link)
+    if check_address == {} or check_address == {"message":"some parameters are invalid or out of range"}:
+        bot.send_message(message.chat.id, 'Wrong address entered\nMaybe you have missed one of the parameters listed above', parse_mode='Markdown')
+    else:
+        if db.get_user_address(user_id=message.from_user.id) == message.text:
+            if db.check_user_hash(user_id=message.from_user.id) == True:
+                bot.send_message(message.chat.id, 'Send ~~10~~ 5 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+            else:
+                bot.send_message(message.chat.id, 'Send 10 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+        else:
+            if not db.check_address(address=message.text) == True:
+                if not db.check_user(user_id=message.from_user.id) == True:
+                    db.add_user(user_id=message.from_user_id, address=message.text)
+                    bot.send_message(message.chat.id, 'Send 10 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+                else:
+                    db.update_user_address(user_id=message.from_user.id, address=message.text)
+                    bot.send_message(message.chat.id, 'Send 10 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+            else:
+                bot.send_message(message.chat.id, 'This address is already in use', reply_markup=btn.Action)
+
+
+@bot.callback_query_handler(func=lambda callback: callback.data == 'transaction')
+def transaction(callback):
+    hash_msg = bot.send_message(callback.message.chat.id, 'Enter transaction hash')
+    bot.register_next_step_handler(hash_msg, transaction2)
+
+def transaction2(message: types.Message):
+    link = 'https://apilist.tronscan.org/api/transaction-info?hash=' + message.text
+    get_link = requests.get(link).text
+    get_hash = json.loads(get_link)
+    if get_hash == {}:
+        bot.send_message(message.chat.id, 'Transaction not found. Maybe wrong network selected\nTry again or contact the [manager](' + MANAGER_LINK + ')', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+    else:
+        if not db.check_hash(hash=message.text) == True:
+            token = get_hash['contractType']
+            if not token == 31:
+                bot.send_message(message.chat.id, 'Wrong token sent\nTry again or contact the [manager](' + MANAGER_LINK + ')', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+            else:
+                status = get_hash['contractRet']
+                if not status == 'SUCCESS':
+                    bot.send_message(message.chat.id, 'Unable to receive payment. Maybe transaction is pending\nTry again or contact the [manager](' + MANAGER_LINK + ')', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+                else:
+                    owner_address_result = get_hash['ownerAddress']
+                    deposit_address_result = get_hash['tokenTransferInfo']['to_address']
+                    amount_result = get_hash['tokenTransferInfo']['amount_str']
+                    owner_address = db.get_address(user_id=message.from_user.id)
+                    if owner_address_result == owner_address and deposit_address_result == CRYPTO_ADDRESS and amount_result == TRANSACTION_AMOUNT + '000000':
+                        if message.chat.type == 'private':
+                            save_user_id = message.from_user.id
+                            db.add_user_hash(user_id=save_user_id, hash=message.text)
+                            db.add_hash(hash=message.text)
+                            bot.unban_chat_member(chat_id=PRIVATE_CHANNEL_ID, user_id=save_user_id)
+                            channel_link = bot.create_chat_invite_link(chat_id=PRIVATE_CHANNEL_ID, member_limit=1)
+                            access_msg = bot.send_message(message.chat.id, 'Payment received!\nHere is your link: ' + str(channel_link)[17:-453] + '\n*REMEMBER*\n1.Link will expire soon and you will be kicked from the channel\n2.Only 1 user can join via this link, then it will become inactive', parse_mode='Markdown')
+                            time.sleep(ACCESS_EXPIRY)
+                            bot.edit_message_text(chat_id=message.chat.id, message_id=access_msg.message_id, text='Link expired')
+                            bot.ban_chat_member(chat_id=PRIVATE_CHANNEL_ID, user_id=save_user_id)
+                    else:
+                        bot.send_message(message.chat.id, 'Some transaction parameters are incorrect\nTry again or contact the [manager](' + MANAGER_LINK + ')', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+        else:
+            bot.send_message(message.chat.id, 'Invalid transaction', reply_markup=btn.TransactionMenu)
+
+
+@bot.callback_query_handler(func=lambda callback: callback.data == 'admin_message')
+def adminMessage(callback):
+    bot.send_message(callback.message.chat.id, 'Select the type of message:', reply_markup=btn.MessageType)
+
+
+@bot.callback_query_handler(func=lambda callback: callback.data == 'public')
+def publicMessage(callback):
+    msg_to_admin = bot.send_message(callback.message.chat.id, 'Enter what you want to send to the bot\'s Admin')
+    bot.register_next_step_handler(msg_to_admin, publicMessage2)
+
+def publicMessage2(message: types.Message):
+    full_date = datetime.datetime.now()
+    time = full_date.time()
+    message_text = 'User "' + message.from_user.id + '" sent you a message at ' + str(time)[0:5] + '\nMessage says: ' + message.text
+    link = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + str(ADMIN_ID) + '&text=' + message_text
+    requests.post(link)
+    bot.send_message(message.chat.id, 'Public message to Admin has been sent')
+
+
+@bot.callback_query_handler(func=lambda callback: callback.data == 'private')
+def privateMessage(callback):
+    msg_to_admin = bot.send_message(callback.message.chat.id, 'Enter what you want to send to the bot\'s Admin')
+    bot.register_next_step_handler(msg_to_admin, privateMessage2)
+
+def privateMessage2(message: types.Message):
+    full_date = datetime.datetime.now()
+    time = full_date.time()
+    message_text = 'Anonymous user sent you a message at ' + str(time)[0:5] + '\nMessage says: ' + message.text
+    link = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + str(ADMIN_ID) + '&text=' + message_text
+    requests.post(link)
+    bot.send_message(message.chat.id, 'Private message to Admin has been sent')    
+
+
+if __name__ == "__main__":
+    bot.polling(none_stop=True)
