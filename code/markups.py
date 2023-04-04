@@ -20,10 +20,10 @@ MsgToAdmin = InlineKeyboardButton(text = 'Message to Admin', callback_data='admi
 Action.add(BuyAccess, MsgToAdmin)
 
 AdminMenu = InlineKeyboardMarkup()
-ReplyToUser = InlineKeyboardButton(text='Reply user', callback_data='reply')
-Payments = InlineKeyboardButton(text='Number of received payments')
-BlockUser = InlineKeyboardButton(text='Block user')
-AdminMenu.add(ReplyToUser, Payments, BlockUser)
+Payments = InlineKeyboardButton(text='Number of received payments', callback_data='payments')
+BlockUser = InlineKeyboardButton(text='Block user', callback_data='block')
+UnblockUser = InlineKeyboardButton(text='Unblock user', callback_data='unblock')
+AdminMenu.add(Payments, BlockUser)
 
 MessageType = InlineKeyboardMarkup()
 Public = InlineKeyboardButton(text='Public', callback_data='public')

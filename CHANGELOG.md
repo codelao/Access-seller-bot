@@ -1,3 +1,12 @@
+# 0.13.2-beta
+*2023-04-04*
+
+### Added
+- Admin menu
+### Fixed
+- Problem with adding user's hashes and new addresses to the database
+
+
 # 0.10.5-alpha
 *2023-04-03*
 

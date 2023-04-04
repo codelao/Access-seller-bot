@@ -63,27 +63,30 @@ def access(callback):
     bot.register_next_step_handler(address_msg, access2)
 
 def access2(message: types.Message):
-    link = 'https://apilist.tronscan.org/api/account?address=' + message.text
-    get_link = requests.get(link).text
-    check_address = json.loads(get_link)
-    if check_address == {} or check_address == {"message":"some parameters are invalid or out of range"}:
-        bot.send_message(message.chat.id, 'Wrong address entered\nMaybe you have missed one of the parameters listed above', parse_mode='Markdown')
-    else:
-        if db.get_user_address(user_id=message.from_user.id) == message.text:
-            if db.check_user_hash(user_id=message.from_user.id) == True:
-                bot.send_message(message.chat.id, 'Send ~~10~~ 5 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
-            else:
-                bot.send_message(message.chat.id, 'Send 10 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+    if not db.check_if_blocked(user_id=message.from_user.id) == True:
+        link = 'https://apilist.tronscan.org/api/account?address=' + message.text
+        get_link = requests.get(link).text
+        check_address = json.loads(get_link)
+        if check_address == {} or check_address == {"message":"some parameters are invalid or out of range"}:
+            bot.send_message(message.chat.id, 'Wrong address entered\nMaybe you have missed one of the parameters listed above', parse_mode='Markdown')
         else:
-            if not db.check_address(address=message.text) == True:
-                if not db.check_user(user_id=message.from_user.id) == True:
-                    db.add_user(user_id=message.from_user_id, address=message.text)
-                    bot.send_message(message.chat.id, 'Send 10 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+            if db.get_user_address(user_id=message.from_user.id) == message.text:
+                if db.check_user_hash(user_id=message.from_user.id) == True:
+                    bot.send_message(message.chat.id, 'Send ~~10~~ 5 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
                 else:
-                    db.update_user_address(user_id=message.from_user.id, address=message.text)
                     bot.send_message(message.chat.id, 'Send 10 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
             else:
-                bot.send_message(message.chat.id, 'This address is already in use', reply_markup=btn.Action)
+                if not db.check_address(address=message.text) == True:
+                    if not db.check_user(user_id=message.from_user.id) == True:
+                        db.add_user(user_id=message.from_user_id, address=message.text)
+                        bot.send_message(message.chat.id, 'Send 10 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+                    else:
+                        db.add_user_address(address=message.text, user_id=message.from_user.id)
+                        bot.send_message(message.chat.id, 'Send 10 USDT to `' + CRYPTO_ADDRESS + '` from your `' + message.text + '` address\nTRC20', parse_mode='Markdown', reply_markup=btn.TransactionMenu)
+                else:
+                    bot.send_message(message.chat.id, 'This address is already in use', reply_markup=btn.Action)
+    else:
+        bot.send_message(message.chat.id, 'You are blocked and not allowed to buy access\nContact the [manager](' + MANAGER_LINK + ')', parse_mode='Markdown')
 
 
 @bot.callback_query_handler(func=lambda callback: callback.data == 'transaction')
@@ -114,7 +117,7 @@ def transaction2(message: types.Message):
                     if owner_address_result == owner_address and deposit_address_result == CRYPTO_ADDRESS and amount_result == TRANSACTION_AMOUNT + '000000':
                         if message.chat.type == 'private':
                             save_user_id = message.from_user.id
-                            db.add_user_hash(user_id=save_user_id, hash=message.text)
+                            db.add_user_hash(hash=message.text, user_id=save_user_id)
                             db.add_hash(hash=message.text)
                             bot.unban_chat_member(chat_id=PRIVATE_CHANNEL_ID, user_id=save_user_id)
                             channel_link = bot.create_chat_invite_link(chat_id=PRIVATE_CHANNEL_ID, member_limit=1)
@@ -139,12 +142,16 @@ def publicMessage(callback):
     bot.register_next_step_handler(msg_to_admin, publicMessage2)
 
 def publicMessage2(message: types.Message):
-    full_date = datetime.datetime.now()
-    time = full_date.time()
-    message_text = 'User "' + message.from_user.id + '" sent you a message at ' + str(time)[0:5] + '\nMessage says: ' + message.text
-    link = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + str(ADMIN_ID) + '&text=' + message_text
-    requests.post(link)
-    bot.send_message(message.chat.id, 'Public message to Admin has been sent')
+    if not db.check_if_blocked(user_id=message.from_user.id) == True:
+        full_date = datetime.datetime.now()
+        time = full_date.time()
+        message_text = 'User "' + message.from_user.id + '" sent you a message at ' + str(time)[0:5] + '\nMessage says: ' + message.text
+        db.add_user_message(user_id=message.from_user.id, message=message_text)
+        link = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + str(ADMIN_ID) + '&text=' + message_text
+        requests.post(link)
+        bot.send_message(message.chat.id, 'Public message to Admin has been sent')
+    else:
+        bot.send_message(message.chat.id, 'You are blocked and not allowed to send messages\nContact the [manager](' + MANAGER_LINK + ')', parse_mode='Markdown')
 
 
 @bot.callback_query_handler(func=lambda callback: callback.data == 'private')
@@ -153,13 +160,65 @@ def privateMessage(callback):
     bot.register_next_step_handler(msg_to_admin, privateMessage2)
 
 def privateMessage2(message: types.Message):
-    full_date = datetime.datetime.now()
-    time = full_date.time()
-    message_text = 'Anonymous user sent you a message at ' + str(time)[0:5] + '\nMessage says: ' + message.text
-    link = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + str(ADMIN_ID) + '&text=' + message_text
-    requests.post(link)
-    bot.send_message(message.chat.id, 'Private message to Admin has been sent')    
+    if not db.check_if_blocked(user_id=message.from_user.id) == True:
+        full_date = datetime.datetime.now()
+        time = full_date.time()
+        message_text = 'Anonymous user sent you a message at ' + str(time)[0:5] + '\nMessage says: ' + message.text
+        db.add_user_message(user_id=message.from_user.id, message=message_text)
+        link = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage?chat_id=' + str(ADMIN_ID) + '&text=' + message_text
+        requests.post(link)
+        bot.send_message(message.chat.id, 'Private message to Admin has been sent')
+    else:
+        bot.send_message(message.chat.id, 'You are blocked and not allowed to send messages\nContact the [manager](' + MANAGER_LINK + ')', parse_mode='Markdown')
 
+
+@bot.callback_query_handler(func=lambda callback: callback.data == 'payments')
+def payments(callback):
+    count = db.payments_count()
+    bot.send_message(callback.message.chat.id, 'Number of payments: ' + count, reply_markup=btn.AdminMenu)
+
+
+@bot.callback_query_handler(func=lambda callback: callback.data == 'block')
+def blockUser(callback):
+    id_msg = bot.send_message(callback.message.chat.id, 'Enter id of a user you want to block\nBlocked user will no longer be able to send messages to you and buy accesses\n/stop - cancel the operation')
+    bot.register_next_step_handler(id_msg, blockUser2)
+
+def blockUser2(message: types.Message):
+    if not message.text == '/stop':
+        if not db.check_if_blocked(user_id=message.text) == True:
+            db.block_user(user_id=message.text)
+            bot.send_message(message.chat.id, 'User blocked', reply_markup=btn.AdminMenu)
+        else:
+            bot.send_message(message.chat.id, 'User is already blocked', reply_markup=btn.AdminMenu)
+    else:
+        if message.from_user.id == ADMIN_ID:
+            bot.send_message(message.chat.id, 'You have canceled the operation', reply_markup=btn.AdminMenu)
+            time.sleep(1)
+            start(message)
+        else:
+            bot.send_message(message.chat.id, 'Unknown command')
+
+
+@bot.callback_query_handler(func=lambda callback: callback.data == 'unblock')
+def unblockUser(callback):
+    id_msg = bot.send_message(callback.message.chat.id, 'Enter id of a user you want to unblock\nUnblocked user will be able to send messages to you and buy accesses again\n/stop - cancel the operation')
+    bot.register_next_step_handler(id_msg, unblockUser2)
+
+def unblockUser2(message: types.Message):
+    if not message.text == '/stop':
+        if db.check_if_blocked(user_id=message.text) == True:
+            db.unblock_user(user_id=message.text)
+            bot.send_message(message.chat.id, 'User unblocked', reply_markup=btn.AdminMenu)
+        else:
+            bot.send_message(message.chat.id, 'This user is not blocked', reply_markup=btn.AdminMenu)
+    else:
+        if message.from_user.id == ADMIN_ID:
+            bot.send_message(message.chat.id, 'You have canceled the operation', reply_markup=btn.AdminMenu)
+            time.sleep(1)
+            start(message)
+        else:
+            bot.send_message(message.chat.id, 'Unknown command')
+        
 
 if __name__ == "__main__":
     bot.polling(none_stop=True)
