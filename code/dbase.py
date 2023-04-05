@@ -4,7 +4,7 @@ import sqlite3
 class Database:
     def __init__(self, db_file):
         self.con = sqlite3.connect(db_file, check_same_thread=False)
-        self.con.cursor().execute("CREATE TABLE IF NOT EXISTS users(user_id INTEGER UNIQUE, hash TEXT, address TEXT)")
+        self.con.cursor().execute("CREATE TABLE IF NOT EXISTS users(user_id INTEGER UNIQUE, address TEXT, hash TEXT)")
         self.con.cursor().execute("CREATE TABLE IF NOT EXISTS hashes(hash TEXT)")
         self.con.cursor().execute("CREATE TABLE IF NOT EXISTS messages(user_id, message TEXT)")
         self.con.cursor().execute("CREATE TABLE IF NOT EXISTS blocked(user_id INTEGER UNIQUE)")
@@ -68,5 +68,5 @@ class Database:
 
     def check_if_blocked(self, user_id):
         with self.con:
-            result = self.con.cursor().execute("SELECT * FROM blocked", (user_id,))
+            result = self.con.cursor().execute("SELECT * FROM blocked WHERE user_id = ?", (user_id,)).fetchall()
             return bool(result)

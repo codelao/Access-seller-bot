@@ -1,3 +1,11 @@
+# 0.13.7-rc
+*2023-04-04*
+
+- bug fix
+### Edited
+- Some text in bot's messages
+
+
 # 0.13.2-beta
 *2023-04-04*
 

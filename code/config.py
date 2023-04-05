@@ -8,7 +8,7 @@ STICKER_ID = 'CAACAgIAAxkBAAEIb25kKpgRNwLfjjvbJG60Mn2ZyX-2FgACVAADQbVWDGq3-McIjQ
 
 CRYPTO_ADDRESS = '' #USDT TRC20 deposit address to receive payments
 
-MANAGER_LINK = '' #link to the manager's Telegram account
+MANAGER_LINK = 'https://t.me/' #link to the manager's Telegram account
 
 ADMIN_ID = 000000000 #can be obtained from "Get My ID" bot
 
