@@ -10,7 +10,7 @@ from config import TOKEN, PUBLIC_CHANNEL_ID, PRIVATE_CHANNEL_ID,  STICKER_ID, CR
 
 
 bot = telebot.TeleBot(TOKEN)
-db = Database('access.db')
+db = Database('bot_dbase.db')
 
 
 def chat_member_status(chat_member):
