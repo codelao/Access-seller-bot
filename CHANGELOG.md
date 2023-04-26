@@ -1,3 +1,14 @@
+# 1.0.0
+*2023-04-27*
+
+### First version!
+- Bug fixes and general improvements
+- Removed anonymous messages from users to avoid spam
+### Added
+- New bot menu
+- Public messages from bot's Admin
+
+
 # 0.13.7-rc
 *2023-04-04*
 

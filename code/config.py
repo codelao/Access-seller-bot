@@ -1,17 +1,17 @@
-TOKEN = ''
+TOKEN = '' # you can get your own bot's token from @BotFather in Telegram
 
-PUBLIC_CHANNEL_ID = '' #can be obtained from "Get My ID" bot
+PUBLIC_CHANNEL_ID = '' # you can get any channel and user id's from @getmyid_bot in Telegram
 
-PRIVATE_CHANNEL_ID = '' #can be obtained from "Get My ID" bot
+PRIVATE_CHANNEL_ID = '' # you can get any channel and user id's from @getmyid_bot in Telegram
 
-STICKER_ID = 'CAACAgIAAxkBAAEIb25kKpgRNwLfjjvbJG60Mn2ZyX-2FgACVAADQbVWDGq3-McIjQH6LwQ' #optional, can be obtained from "Get Sticker ID" bot
+STICKER_ID = 'CAACAgIAAxkBAAEIu85kSDASV-ztLjKiIaKBBphepX_KTwACbwAD29t-AAGZW1Coe5OAdC8E' # you can get any sticker id from @idstickerbot in Telegram
 
-CRYPTO_ADDRESS = '' #USDT TRC20 deposit address to receive payments
+CRYPTO_ADDRESS = '' # USDT TRC20 address for receiving payments
 
-MANAGER_LINK = 'https://t.me/' #link to the manager's Telegram account
+ADMIN_ID = 123456789 # you can get any channel and user id's from @getmyid_bot in Telegram
 
-ADMIN_ID = 000000000 #can be obtained from "Get My ID" bot
+TRANSACTION_AMOUNT = '10' # must be specified in USDT (10 USDT by default)
 
-TRANSACTION_AMOUNT = '' #Must be specified in USDT
+DISCOUNTED_TRANSACTION_AMOUNT = '5' # must be specified in USDT (5 USDT by default)
 
-ACCESS_EXPIRY = 3600 #Must be specified in seconds (1 hour by default)
+ACCESS_EXPIRY = 3600 # must be specified in seconds (1 hour by default)
