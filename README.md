@@ -45,7 +45,7 @@ This bot accepts only crypto payments and it has a function of communication bet
 $ git clone https://github.com/codelao/Access-seller-bot.git
 $ cd Access-seller-bot
 $ pip3 install -r requirements.txt
-$ cd bot
+$ cd code
 ```
 
 #### Step 2 - *Сhanging bot's parameters*
