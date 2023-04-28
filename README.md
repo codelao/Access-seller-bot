@@ -38,7 +38,7 @@ This bot accepts only crypto payments and it has a function of communication bet
 
 ## Installation
 
-#### Step 1 - *Bot installation*
+#### Step 1
 ```
 $ git clone https://github.com/codelao/Access-seller-bot.git
 $ cd Access-seller-bot
@@ -46,14 +46,14 @@ $ pip3 install -r requirements.txt
 $ cd code
 ```
 
-#### Step 2 - *Сhanging bot's parameters*
+#### Step 2
 Go to installed **config.py** file on your computer
 
 Enter your bot's token there and change other bot's parameters based on your preferences
 
 It is very important to change this parameters as bot will not work correctly without them
 
-#### Step 3 - *Bot launch*
+#### Step 3
 ```
 $ python3 bot.py
 ```
