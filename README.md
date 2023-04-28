@@ -8,7 +8,6 @@
 
 * [More info](#more-info)
 * [Installation](#installation)
-* [Usage](#usage)
 
 
 ## Screenshots
@@ -38,7 +37,6 @@ This bot accepts only crypto payments and it has a function of communication bet
 
 
 ## Installation
-*Note: you need to have Python installed in your system before moving to the first step*
 
 #### Step 1 - *Bot installation*
 ```
