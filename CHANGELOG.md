@@ -1,3 +1,9 @@
+# 1.1.1
+*2023-08-31*
+
+### Minor improvements and bug fixes.
+
+
 # 1.1.0
 *2023-08-31*
 

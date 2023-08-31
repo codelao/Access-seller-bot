@@ -5,7 +5,7 @@ clear
 printf "//Configuring your own Access Seller Bot.\n///You must enter only correct and valid data, otherwise your bot will not work correctly.\n"
 printf "1. Your bot's token:\n////You can get your own bot's token from @BotFather in Telegram.\n"
 read TOKEN
-echo "TOKEN = '$TOKEN'" >> "config.py"
+echo "TOKEN = '$TOKEN'" > "config.py"
 printf "2. Public Telegram channel's id:\n////You can get any channel and user id's from @getmyid_bot in Telegram.\n"
 read PUBLIC_CHANNEL_ID
 echo "PUBLIC_CHANNEL_ID = '$PUBLIC_CHANNEL_ID'" >> "config.py"

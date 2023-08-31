@@ -24,7 +24,7 @@ echo ///You must enter only correct and valid data, otherwise your bot will not 
 echo 1. Your bot's token:
 echo ////You can get your own bot's token from @BotFather in Telegram.
 set /p "TOKEN="
-echo TOKEN = '%TOKEN%' >> "config.py"
+echo TOKEN = '%TOKEN%' > "config.py"
 echo 2. Public Telegram channel's id:
 echo ////You can get any channel and user id's from @getmyid_bot in Telegram.
 set /p "PUBLIC_CHANNEL_ID="

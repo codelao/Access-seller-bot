@@ -23,11 +23,17 @@ from config import TOKEN, PUBLIC_CHANNEL_ID, PRIVATE_CHANNEL_ID,  STICKER_ID, AD
 bot = telebot.TeleBot(TOKEN)
 db = Database(CURRENT_PATH + '/bot_dbase.db')
 
-def checkAdmin():
-    bot_id = bot.get_me().id
+def checkTOKEN():
     try:
-        public_member = bot.get_chat_member(PUBLIC_CHANNEL_ID, bot_id)
-        private_member = bot.get_chat_member(PRIVATE_CHANNEL_ID, bot_id)
+        bot_id = bot.get_me().id
+        return bot_id
+    except:
+        return False
+
+def checkAdmin():
+    try:
+        public_member = bot.get_chat_member(PUBLIC_CHANNEL_ID, checkTOKEN())
+        private_member = bot.get_chat_member(PRIVATE_CHANNEL_ID, checkTOKEN())
         if public_member.status == 'administrator' and private_member.status == 'administrator':
             return True
         else:
@@ -339,9 +345,13 @@ def unblockUser2(message: types.Message):
 
 
 if __name__ == "__main__":
-    if checkAdmin() == True:
-        print('\033[32mBot is ready for use.\033[0m')
-        bot.polling(none_stop=True)
+    if not checkTOKEN() == False:
+        if checkAdmin() == True:
+            print('\033[32mBot is ready for use.\033[0m')
+            bot.polling(none_stop=True)
+        else:
+            print('\033[31mGive admin rights to bot in specified Telegram channels first.\033[0m')
+            sys.exit(1)
     else:
-        print('\033[31mGive admin rights to bot in specified channels first.\033[0m')
+        print('\033[31mInvalid bot\'s TOKEN.\033[0m')
         sys.exit(1)
