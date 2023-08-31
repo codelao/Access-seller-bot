@@ -40,6 +40,7 @@ Access seller is a Telegram bot which is needed for buying access to private Tel
 
 ## Installation
 ### macOS/Linux
+*Note:* you need to have Python3 and Git installed in your system before moving to the installation steps.
 1. Copy and paste this command into the Terminal:
 ```
 git clone https://github.com/codelao/Access-seller-bot.git && cd Access-seller-bot && bash configure.sh
@@ -50,6 +51,7 @@ git clone https://github.com/codelao/Access-seller-bot.git && cd Access-seller-b
 ```
 
 ### Windows 10, 11
+*Note:* you need to have Python3 and Git installed in your system before moving to the installation steps.
 1. Copy and paste this command into the Command Prompt:
 ```
 git clone https://github.com/codelao/Access-seller-bot.git && cd Access-seller-bot && configure
