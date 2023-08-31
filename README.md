@@ -29,13 +29,13 @@
 
 #### Other:
 <p>
-  <img src="READMEimages/restart.png" width="30%">
-  <img src="READMEimages/running.png" width="30%">
+  <img src="READMEimages/restart.png" width="50%">
+  <img src="READMEimages/running.png" width="50%">
 </p>
 
 
 ## More info
-Access seller is a Telegram bot which is needed for buying access to private Telegram channels.<br>This bot accepts only crypto payments and it has a function of communication between users and Admin.
+Access seller is a Telegram bot which is needed for buying access to private Telegram channels.<br>This bot accepts only crypto payments and it has a function of communication between users and bot's admin.
 
 
 ## Installation
