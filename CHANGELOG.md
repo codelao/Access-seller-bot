@@ -1,3 +1,10 @@
+# 1.1.0
+*2023-08-31*
+
+### Bot's configuration now easier.
+### General code improvements, fixed some bugs.
+
+
 # 1.0.0
 *2023-04-27*
 
