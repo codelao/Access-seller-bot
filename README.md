@@ -6,7 +6,7 @@
     Access Seller Bot
 </h1>
 
-* [More info](#more-info)
+* [Usage](#usage)
 * [Installation](#installation)
 
 
@@ -34,8 +34,8 @@
 </p>
 
 
-## More info
-Access seller is a Telegram bot which is needed for buying access to private Telegram channels.<br>This bot accepts only crypto payments and it has a function of communication between users and bot's admin.
+## Usage
+This bot can be used to accept crypto payments and give an access to the private channel in Telegram. It can be also used for communication between users and bot's admin.</br>Make sure that you configured bot correctly before reporting a bug.
 
 
 ## Installation
