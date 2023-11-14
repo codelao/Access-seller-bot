@@ -1,3 +1,11 @@
+# 1.1.5
+*2023-11-14*
+
+### Code optimization
+### Improvements in messaging between users and admin algorithm
+### Added the ability of sending photos in public messages as bot's admin
+
+
 # 1.1.1
 *2023-08-31*
 

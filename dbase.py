@@ -7,6 +7,7 @@ class Database:
         self.con.cursor().execute("CREATE TABLE IF NOT EXISTS users(user_id INTEGER UNIQUE, address TEXT UNIQUE, hash TEXT UNIQUE, access TEXT)")
         self.con.cursor().execute("CREATE TABLE IF NOT EXISTS hashes(hash TEXT UNIQUE)")
         self.con.cursor().execute("CREATE TABLE IF NOT EXISTS blocked(user_id INTEGER UNIQUE)")
+        self.con.cursor().execute("CREATE TABLE IF NOT EXISTS feedbacks(user_id INTEGER PRIMARY KEY, username TEXT)")
 
     def get_user_address(self, user_id):
         with self.con:
@@ -23,7 +24,7 @@ class Database:
         
     def add_user(self, user_id, address, access):
         with self.con:
-            self.con.cursor().execute("INSERT OR REPLACE INTO users (user_id, address, access) VALUES (?, ?, ?)", (user_id, address, access,))
+            self.con.cursor().execute("INSERT INTO users (user_id, address, access) VALUES (?, ?, ?)", (user_id, address, access,))
 
     def add_user_address(self, address, user_id):
         with self.con:
@@ -43,7 +44,7 @@ class Database:
 
     def add_hash(self, hash):
         with self.con:
-            self.con.cursor().execute("INSERT INTO hashes VALUES (?)", (hash,))
+            self.con.cursor().execute("INSERT OR REPLACE INTO hashes VALUES (?)", (hash,))
 
     def check_hash(self, hash):
         with self.con:
@@ -62,7 +63,7 @@ class Database:
 
     def block_user(self, user_id):
         with self.con:
-            self.con.cursor().execute("INSERT OR REPLACE INTO blocked VALUES (?)", (user_id,))
+            self.con.cursor().execute("INSERT INTO blocked VALUES (?)", (user_id,))
 
     def unblock_user(self, user_id):
         with self.con:
@@ -76,3 +77,15 @@ class Database:
     def get_all_users(self):
         with self.con:
             return self.con.cursor().execute("SELECT user_id FROM users").fetchall()
+        
+    def add_user_msg(self, user_id, username):
+        with self.con:
+            self.con.cursor().execute("INSERT INTO feedbacks VALUES (?, ?)", (user_id, username,))
+        
+    def check_user_msg(self, user_id):
+        with self.con:
+            return self.con.cursor().execute("SELECT * FROM feedbacks WHERE user_id = ?", (user_id,)).fetchone()
+                
+    def remove_user_msg(self, user_id):
+        with self.con:
+            self.con.cursor().execute("DELETE FROM feedbacks WHERE user_id = ?", (user_id,))

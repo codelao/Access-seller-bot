@@ -13,24 +13,25 @@
 ## Screenshots
 #### As user:
 <p>
-  <img src="READMEimages/user1.png" width="30%">
-  <img src="READMEimages/user2.png" width="30%">
-  <img src="READMEimages/user3.png" width="30%">
-  <img src="READMEimages/user4.png" width="30%">
-  <img src="READMEimages/user5.png" width="30%">
+  <img src="READMEimages/user1.png" width="30%"></br>
+  <img src="READMEimages/user2.png" width="30%"></br>
+  <img src="READMEimages/user3.png" width="30%"></br>
+  <img src="READMEimages/user4.png" width="30%"></br>
+  <img src="READMEimages/user5.png" width="30%"></br>
+  <img src="READMEimages/user6.png" width="30%"></br>
 </p>
 
 #### As admin:
 <p>
-  <img src="READMEimages/admin1.png" width="30%">
-  <img src="READMEimages/admin2.png" width="30%">
-  <img src="READMEimages/admin3.png" width="30%">
+  <img src="READMEimages/admin1.png" width="30%"></br>
+  <img src="READMEimages/admin2.png" width="30%"></br>
+  <img src="READMEimages/admin3.png" width="30%"></br>
 </p>
 
 #### Other:
 <p>
-  <img src="READMEimages/restart.png" width="50%">
-  <img src="READMEimages/running.png" width="50%">
+  <img src="READMEimages/restart.png" width="50%"></br>
+  <img src="READMEimages/running.png" width="50%"></br>
 </p>
 
 

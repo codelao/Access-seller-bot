@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 
-import os
-import sys
-import colorama
-import telebot
-import time
-import requests
-import json
+import os, sys, colorama, telebot, time, requests, json
 import buttons as btn
 from telebot import types
 from dbase import Database
@@ -222,20 +216,23 @@ def transaction2(message: types.Message):
 
 @bot.callback_query_handler(func=lambda callback: callback.data == 'msg_to_admin')
 def adminMessage(callback):
-    msg_to_admin = bot.send_message(callback.message.chat.id, 'Enter your message to Admin\n\n/stop - cancel the operation')
-    bot.register_next_step_handler(msg_to_admin, adminMessage2)
+    if bool(db.check_user_msg(user_id=callback.message.chat.id)) == False:
+        msg_to_admin = bot.send_message(callback.message.chat.id, 'Enter your message to Admin\n\n/stop - cancel the operation')
+        bot.register_next_step_handler(msg_to_admin, adminMessage2)
+    else:
+        bot.send_message(callback.message.chat.id, 'You already have a queued message to Admin\nWait for the response before sending a new one')
 
 def adminMessage2(message: types.Message):
     if not message.text == '/stop':
         if not db.check_if_blocked(user_id=message.from_user.id) == True:
             try:
-                global id
-                global username
-                id = message.from_user.id
-                username = message.from_user.username
-                message_text = '*New message received:*\n' + message.text + '\n\n👤' + message.from_user.username + '(' + str(message.from_user.id) + ')'
-                bot.send_message(ADMIN_ID, message_text, reply_markup=btn.MessageMenu, parse_mode='Markdown')
-                bot.send_message(message.chat.id, 'Message has been sent to bot\'s Admin')
+                if message.content_type == 'text':
+                    message_text = '*New message received:*\n' + message.text + '\n\n👤' + message.from_user.username + ' (' + str(message.from_user.id) + ')'
+                    bot.send_message(ADMIN_ID, message_text, reply_markup=btn.MessageMenu, parse_mode='Markdown')
+                    db.add_user_msg(user_id=message.from_user.id, username=message.from_user.username)
+                    bot.send_message(message.chat.id, 'Message has been sent to bot\'s Admin')
+                else:
+                    bot.send_message(message.chat.id, 'You\'ve sent: '+message.content_type+'\nExpected: text')
             except:
                 bot.send_message(message.chat.id, '_Something went wrong_', parse_mode='Markdown')
         else:
@@ -249,15 +246,24 @@ def adminMessage2(message: types.Message):
 
 @bot.callback_query_handler(func=lambda callback: callback.data == 'reply')
 def replyToMessage(callback):
+    global username
+    global user_id
+    username = callback.message.text.split()[5][1:]
+    user_id = callback.message.text.split()[6][1:-1]
+    bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
     reply_text = bot.send_message(callback.message.chat.id, 'Enter your reply to ' + username + '\n\n/stop - cancel the operation')
     bot.register_next_step_handler(reply_text, replyToMessage2)
 
 def replyToMessage2(message: types.Message):
     if not message.text == '/stop':
         try:
-            message_text = '*Reply received:*\n' + message.text + '\n\n👤Admin'
-            bot.send_message(id, message_text, parse_mode='Markdown')
-            bot.send_message(message.chat.id, 'Reply has been sent to ' + username)
+            if message.content_type == 'text':
+                message_text = '*Reply received:*\n' + message.text + '\n\n👤Admin'
+                bot.send_message(user_id, message_text, parse_mode='Markdown')
+                bot.send_message(message.chat.id, 'Reply has been sent to ' + username)
+                db.remove_user_msg(user_id=user_id)
+            else:
+                bot.send_message(message.chat.id, 'You\'ve sent: '+message.content_type+'\nExpected: text')
         except:
             bot.send_message(message.chat.id, '_Something went wrong_', parse_mode='Markdown')
     else:
@@ -269,7 +275,9 @@ def replyToMessage2(message: types.Message):
 
 @bot.callback_query_handler(func=lambda callback: callback.data == 'delete')
 def deleteMessage(callback):
+    user_id = callback.message.text.split()[6][1:-1]
     bot.delete_message(callback.message.chat.id, callback.message.message_id)
+    db.remove_user_msg(user_id=user_id)
 
 
 @bot.callback_query_handler(func=lambda callback: callback.data == 'payments')
@@ -286,11 +294,19 @@ def publicMessage(callback):
 def publicMessage2(message: types.Message):
     if not message.text == '/stop':
         try:
-            message_text = '*Public message received:*\n' + message.text + '\n\n👤Admin'
-            all_users = db.get_all_users()
-            for user_id in all_users:
-                bot.send_message(user_id[0], message_text, parse_mode='Markdown')
-                bot.send_message(message.chat.id, 'Public message has been sent to all bot\'s users')
+            if message.content_type == 'text':
+                message_text = '*Public message received:*\n' + message.text + '\n\n👤Admin'
+                all_users = db.get_all_users()
+                for ids in all_users:
+                    bot.send_message(ids[0], message_text, parse_mode='Markdown')
+                bot.send_message(message.chat.id, 'Public message has been sent to all saved bot\'s users')
+            elif message.content_type == 'photo':
+                global photo
+                photo = message.photo[-1].file_id
+                caption_msg = bot.send_message(message.chat.id, 'Add a caption to your photo\n\n/no_caption - send photo without caption')
+                bot.register_next_step_handler(caption_msg, publicMessage3)
+            else:
+                bot.send_message(message.chat.id, 'You\'ve sent: '+message.content_type+'\nExpected: text or photo')                
         except:
             bot.send_message(message.chat.id, '_Something went wrong_', parse_mode='Markdown')
     else:
@@ -298,6 +314,23 @@ def publicMessage2(message: types.Message):
         time.sleep(1)
         bot.delete_message(message.chat.id, cancel_msg.message_id)
         start(message)
+
+def publicMessage3(message: types.Message):
+    try:
+        if message.content_type == 'text':
+            message_text = '*Public message received:*\n' + message.text + '\n\n👤Admin'
+            all_users = db.get_all_users()
+            if not message.text == '/no_caption':
+                for ids in all_users:
+                    bot.send_photo(ids[0], photo, caption=message_text, parse_mode='Markdown')
+            else:
+                for ids in all_users:
+                    bot.send_photo(ids[0], photo)
+            bot.send_message(message.chat.id, 'Public message has been sent to all saved bot\'s users')
+        else:
+            bot.send_message(message.chat.id, 'You\'ve sent: '+message.content_type+'\nExpected: text')
+    except:
+        bot.send_message(message.chat.id, '_Something went wrong_', parse_mode='Markdown')
 
 
 @bot.callback_query_handler(func=lambda callback: callback.data == 'block')
