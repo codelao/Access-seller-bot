@@ -38,6 +38,7 @@ This bot uses [pyTelegramBotAPI](https://pypi.org/project/pyTelegramBotAPI/) lib
 
 
 ## Installation
+You can either install the bot manually or refer to configuration scripts as shown below:</br>
 ### macOS/Linux
 *Note:* you need to have Python3 and Git installed in your system before moving to the bot installation steps.
 1. Copy and paste this command into the Terminal:
