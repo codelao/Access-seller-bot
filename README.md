@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="READMEimages/banner.png" width="75%">
-</p>
-
 <h1 align="center">
     Access Seller Bot
 </h1>
@@ -13,30 +9,32 @@
 ## Screenshots
 #### As user:
 <p>
-  <img src="READMEimages/user1.png" width="30%"></br>
-  <img src="READMEimages/user2.png" width="30%"></br>
-  <img src="READMEimages/user3.png" width="30%"></br>
-  <img src="READMEimages/user4.png" width="30%"></br>
-  <img src="READMEimages/user5.png" width="30%"></br>
-  <img src="READMEimages/user6.png" width="30%"></br>
+  <img src="https://i.imgur.com/fOisKRp.png" width="30%"></br>
+  <img src="https://i.imgur.com/WqgijTO.png" width="30%"></br>
+  <img src="https://i.imgur.com/zZ5RMOb.png" width="30%"></br>
+  <img src="https://i.imgur.com/z5nxXeo.png" width="30%"></br>
+  <img src="https://i.imgur.com/iDU2yQl.png" width="30%"></br>
+  <img src="https://i.imgur.com/AgRN7KJ.png" width="30%"></br>
 </p>
 
 #### As admin:
 <p>
-  <img src="READMEimages/admin1.png" width="30%"></br>
-  <img src="READMEimages/admin2.png" width="30%"></br>
-  <img src="READMEimages/admin3.png" width="30%"></br>
+  <img src="https://i.imgur.com/kkj4Og4.png" width="30%"></br>
+  <img src="https://i.imgur.com/cokzXTy.png" width="30%"></br>
+  <img src="https://i.imgur.com/YAJtRQ6.png" width="30%"></br>
 </p>
 
 #### Other:
 <p>
-  <img src="READMEimages/restart.png" width="50%"></br>
-  <img src="READMEimages/running.png" width="50%"></br>
+  <img src="https://i.imgur.com/xQBXcPC.png" width="50%"></br>
+  <img src="https://i.imgur.com/IfMqxVf.png" width="50%"></br>
 </p>
 
 
 ## Usage
-This bot can be used to accept crypto payments and give an access to the private channel in Telegram. It can be also used for communication between users and bot's admin.</br>Make sure that you configured bot correctly before reporting a bug.
+This bot can be used to accept crypto payments and give an access to the private channel in Telegram. It can be also used for communication between users and bot's admin.</br>Make sure that you configured bot correctly before reporting a bug.</br>
+**! Important note !**</br>
+This bot uses [pyTelegramBotAPI](https://pypi.org/project/pyTelegramBotAPI/) library which doesn't directly support asynchronous running. If you need your bot to work asynchronously, I would recommend migrating to [aiogram](https://pypi.org/project/aiogram/).
 
 
 ## Installation
