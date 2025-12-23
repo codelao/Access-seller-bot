@@ -9,25 +9,25 @@
 ## Screenshots
 #### As user:
 <p>
-  <img src="https://i.imgur.com/fOisKRp.png" width="30%"></br>
-  <img src="https://i.imgur.com/WqgijTO.png" width="30%"></br>
-  <img src="https://i.imgur.com/zZ5RMOb.png" width="30%"></br>
-  <img src="https://i.imgur.com/z5nxXeo.png" width="30%"></br>
-  <img src="https://i.imgur.com/iDU2yQl.png" width="30%"></br>
-  <img src="https://i.imgur.com/AgRN7KJ.png" width="30%"></br>
+  <img src="https://i.imgur.com/fOisKRp.png" width="50%"></br>
+  <img src="https://i.imgur.com/WqgijTO.png" width="50%"></br>
+  <img src="https://i.imgur.com/zZ5RMOb.png" width="50%"></br>
+  <img src="https://i.imgur.com/z5nxXeo.png" width="50%"></br>
+  <img src="https://i.imgur.com/iDU2yQl.png" width="50%"></br>
+  <img src="https://i.imgur.com/AgRN7KJ.png" width="50%"></br>
 </p>
 
 #### As admin:
 <p>
-  <img src="https://i.imgur.com/kkj4Og4.png" width="30%"></br>
-  <img src="https://i.imgur.com/cokzXTy.png" width="30%"></br>
-  <img src="https://i.imgur.com/YAJtRQ6.png" width="30%"></br>
+  <img src="https://i.imgur.com/kkj4Og4.png" width="50%"></br>
+  <img src="https://i.imgur.com/cokzXTy.png" width="50%"></br>
+  <img src="https://i.imgur.com/YAJtRQ6.png" width="50%"></br>
 </p>
 
 #### Other:
 <p>
   <img src="https://i.imgur.com/xQBXcPC.png" width="50%"></br>
-  <img src="https://i.imgur.com/IfMqxVf.png" width="50%"></br>
+  <img src="https://i.imgur.com/IfMqxVf.png" width="60%"></br>
 </p>
 
 
